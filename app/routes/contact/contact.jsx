@@ -14,10 +14,9 @@ import { useRef } from 'react';
 import { cssProps, msToNum, numToMs } from '~/utils/style';
 import { baseMeta } from '~/utils/meta';
 import { Form, useActionData, useNavigation } from '@remix-run/react';
-import { json } from '@remix-run/cloudflare';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import styles from './contact.module.css';
-
+import emailjs from '@emailjs/browser';
+import { json } from '@remix-run/cloudflare';
 export const meta = () => {
   return baseMeta({
     title: 'Contact',
@@ -28,70 +27,52 @@ export const meta = () => {
 
 const MAX_EMAIL_LENGTH = 512;
 const MAX_MESSAGE_LENGTH = 4096;
-const EMAIL_PATTERN = /(.+)@(.+){2,}\.(.+){2,}/;
 
-export async function action({ context, request }) {
-  const ses = new SESClient({
-    region: 'us-east-1',
-    credentials: {
-      accessKeyId: context.cloudflare.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: context.cloudflare.env.AWS_SECRET_ACCESS_KEY,
-    },
-  });
+// export async function action({  request }) {
 
-  const formData = await request.formData();
-  const isBot = String(formData.get('name'));
-  const email = String(formData.get('email'));
-  const message = String(formData.get('message'));
-  const errors = {};
+//   const formData = await request.formData();
+//   const email = String(formData.get('email'));
+//   const message = String(formData.get('message'));
+//   const errors = {};
 
-  // Return without sending if a bot trips the honeypot
-  if (isBot) return json({ success: true });
+//   // Handle input validation on the server
+//   if (!email || !EMAIL_PATTERN.test(email)) {
+//     errors.email = 'Please enter a valid email address.';
+//   }
 
-  // Handle input validation on the server
-  if (!email || !EMAIL_PATTERN.test(email)) {
-    errors.email = 'Please enter a valid email address.';
-  }
+//   if (!message) {
+//     errors.message = 'Please enter a message.';
+//   }
 
-  if (!message) {
-    errors.message = 'Please enter a message.';
-  }
+//   if (email.length > MAX_EMAIL_LENGTH) {
+//     errors.email = `Email address must be shorter than ${MAX_EMAIL_LENGTH} characters.`;
+//   }
 
-  if (email.length > MAX_EMAIL_LENGTH) {
-    errors.email = `Email address must be shorter than ${MAX_EMAIL_LENGTH} characters.`;
-  }
+//   if (message.length > MAX_MESSAGE_LENGTH) {
+//     errors.message = `Message must be shorter than ${MAX_MESSAGE_LENGTH} characters.`;
+//   }
 
-  if (message.length > MAX_MESSAGE_LENGTH) {
-    errors.message = `Message must be shorter than ${MAX_MESSAGE_LENGTH} characters.`;
-  }
+//   if (Object.keys(errors).length > 0) {
+//     return json({ errors });
+//   }
 
-  if (Object.keys(errors).length > 0) {
-    return json({ errors });
-  }
+//   // Send email via Amazon SES
+//   await emailjs
+//     .sendForm('service_kn83j8k', 'template_5ex7q3w', form.current, {
+//       publicKey: 'CuJq83sWwPvvcNV6j',
+//     })
+//     .then(
+//       result => {
+//         console.log('SUCCESS!');
+//         form.current.reset();
+//       },
+//       error => {
+//         console.log('FAILED...', error.text);
+//       }
+//     );
 
-  // Send email via Amazon SES
-  await ses.send(
-    new SendEmailCommand({
-      Destination: {
-        ToAddresses: [context.cloudflare.env.EMAIL],
-      },
-      Message: {
-        Body: {
-          Text: {
-            Data: `From: ${email}\n\n${message}`,
-          },
-        },
-        Subject: {
-          Data: `Portfolio message from ${email}`,
-        },
-      },
-      Source: `Portfolio <${context.cloudflare.env.FROM_EMAIL}>`,
-      ReplyToAddresses: [email],
-    })
-  );
-
-  return json({ success: true });
-}
+//   return json({ success: true });
+// }
 
 export const Contact = () => {
   const errorRef = useRef();
@@ -101,16 +82,35 @@ export const Contact = () => {
   const actionData = useActionData();
   const { state } = useNavigation();
   const sending = state === 'submitting';
-
+  const form = useRef();
+  const sendEmail = e => {
+    e.preventDefault();
+    emailjs
+      .sendForm('service_kn83j8k', 'template_78wsd1l', form.current, {
+        publicKey: 'CuJq83sWwPvvcNV6j',
+      })
+      .then(
+        result => {
+          console.log('SUCCESS!');
+          form.current.reset();
+          console.log(result);
+          window.location.reload();
+        },
+        error => {
+          console.log('FAILED...', error.text);
+        }
+      );
+  };
   return (
     <Section className={styles.contact}>
       <Transition unmount in={!actionData?.success} timeout={1600}>
-        {({ status, nodeRef }) => (
+        {({ status }) => (
           <Form
             unstable_viewTransition
             className={styles.form}
             method="post"
-            ref={nodeRef}
+            ref={form}
+            onSubmit={sendEmail}
           >
             <Heading
               className={styles.title}
@@ -125,13 +125,6 @@ export const Contact = () => {
               className={styles.divider}
               data-status={status}
               style={getDelay(tokens.base.durationXS, initDelay, 0.4)}
-            />
-            {/* Hidden honeypot field to identify bots */}
-            <Input
-              className={styles.botkiller}
-              label="Name"
-              name="name"
-              maxLength={MAX_EMAIL_LENGTH}
             />
             <Input
               required
