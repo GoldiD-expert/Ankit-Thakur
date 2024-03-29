@@ -25,11 +25,11 @@ export const socialLinks = [
     url: `https://twitter.com/${config.twitter}`,
     icon: 'twitter',
   },
-  // {
-  //   label: 'Figma',
-  //   url: `https://www.figma.com/${config.figma}`,
-  //   icon: 'figma',
-  // },
+  {
+    label: 'whatsapp',
+    url: 'https://wa.me/918219066645',
+    icon: 'figma',
+  },
   {
     label: 'Github',
     url: `https://github.com/${config.github}`,

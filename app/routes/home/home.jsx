@@ -4,6 +4,11 @@ import gamestackTexture2 from '~/assets/gamestack-list.jpg';
 import gamestackTextureLarge from '~/assets/gamestack-login-large.jpg';
 import gamestackTexturePlaceholder from '~/assets/gamestack-login-placeholder.jpg';
 import gamestackTexture from '~/assets/gamestack-login.jpg';
+import salinakaTexture from '~/assets/salinakaTexture.png';
+import yogaTexture from '~/assets/yoga1.png';
+import yoga2Texture from '~/assets/yoga2.png';
+import flowlyTexture from '~/assets/flowyimg.png';
+import flowlyTexture2 from '~/assets/flowyimg2.png';
 import sliceTextureLarge from '~/assets/slice-app-large.jpg';
 import sliceTexturePlaceholder from '~/assets/slice-app-placeholder.jpg';
 import sliceTexture from '~/assets/slice-app.jpg';
@@ -159,6 +164,76 @@ export const Home = () => {
             {
               srcSet: `${sliceTexture} 800w, ${sliceTextureLarge} 1920w`,
               placeholder: sliceTexturePlaceholder,
+            },
+          ],
+        }}
+      />
+      <ProjectSummary
+        id="project-4"
+        alternate
+        sectionRef={projectOne}
+        visible={visibleSections.includes(projectOne.current)}
+        index={4}
+        title="Clothes Shop"
+        description="Transform clothes shopping with enhanced annotations for informed decisions and effortless navigation."
+        buttonText="View website"
+        buttonLink="https://flowy-cart.onrender.com/"
+        model={{
+          type: 'phone',
+          alt: 'flowly mart',
+          textures: [
+            {
+              srcSet: `${flowlyTexture} 375w, ${flowlyTexture} 750w`,
+              placeholder: flowlyTexture,
+            },
+            {
+              srcSet: `${flowlyTexture2} 375w, ${flowlyTexture2} 750w`,
+              placeholder: flowlyTexture2,
+            },
+          ],
+        }}
+      />
+      <ProjectSummary
+        id="project-5"
+        sectionRef={projectOne}
+        visible={visibleSections.includes(projectOne.current)}
+        index={5}
+        title="Ecommerce Website"
+        description="Enhance ecommerce browsing with Slice app annotations, aiding informed purchases and easy navigation."
+        buttonText="View website"
+        buttonLink="https://salinaka-ecommerce.web.app/"
+        model={{
+          type: 'laptop',
+          alt: 'App login screen',
+          textures: [
+            {
+              srcSet: `${salinakaTexture} 800w, ${salinakaTexture} 1920w`,
+              placeholder: salinakaTexture,
+            },
+          ],
+        }}
+      />
+      <ProjectSummary
+        id="project-6"
+        alternate
+        sectionRef={projectOne}
+        visible={visibleSections.includes(projectOne.current)}
+        index={6}
+        title="Landing Page For Yoga Institute"
+        description="Elevate your yoga journey with our institute's immersive landing page, guiding you towards inner peace and holistic well-being."
+        buttonText="View website"
+        buttonLink="https://flowy-cart.onrender.com/"
+        model={{
+          type: 'phone',
+          alt: 'Yoga Institute',
+          textures: [
+            {
+              srcSet: `${yogaTexture} 375w, ${yogaTexture} 750w`,
+              placeholder: yogaTexture,
+            },
+            {
+              srcSet: `${yoga2Texture} 375w, ${yoga2Texture} 750w`,
+              placeholder: yoga2Texture,
             },
           ],
         }}
