@@ -40,7 +40,7 @@
   grid-column-gap: var(--space2XL);
   max-width: var(--maxWidthL);
   width: 100%;
-
+  align-items: start;
   @media (--mediaTablet) {
     max-width: 600px;
     grid-template-columns: 100%;
